@@ -1,0 +1,22 @@
+# --- Joern / CPG artifacts ---
+cpgs/
+workspace/
+*.bin
+*.tmp
+
+# --- Generated outputs ---
+outputs/
+features/
+vectors/
+evaluation/*.json
+
+# --- Python ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# --- OS junk ---
+.DS_Store
+Thumbs.db
+
