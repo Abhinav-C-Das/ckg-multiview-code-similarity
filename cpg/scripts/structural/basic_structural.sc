@@ -52,7 +52,10 @@ val loopCount =
       case _                                  => false
     }
   )
-
+val ternaryCount =
+  methods.flatMap(_.ast.isCall).count(call =>
+    call.name == "<operator>.conditional"
+  )
 println("{")
 println(s"""  "ast_node_count": $astNodeCount,""")
 println(s"""  "ast_type_histogram": ${jsonMapInt(astTypeHistogram)},""")
@@ -61,6 +64,7 @@ println(s"""  "avg_ast_depth": $avgAstDepth,""")
 println(s"""  "cfg_node_count": $cfgNodeCount,""")
 println(s"""  "cfg_edge_count": $cfgEdgeCount,""")
 println(s"""  "conditional_count": $conditionalCount,""")
-println(s"""  "loop_count": $loopCount""")
+println(s"""  "loop_count": $loopCount,""")
+println(s"""  "ternary_count": $ternaryCount""")
 println("}")
 

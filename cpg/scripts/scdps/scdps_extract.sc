@@ -19,7 +19,7 @@ final class Counter(var value: Int)
 // =========================================
 // FROZEN PARAMETERS
 // =========================================
-val MAX_DEPTH = 3
+val MAX_DEPTH = 2
 val MAX_PATHS_PER_START = 1000
 
 // =========================================
@@ -34,6 +34,7 @@ val allowedNodeLabels = Set(
   "RETURN",
   "METHOD_RETURN"
 )
+
 
 // =========================================
 // VALID START NODES (SANDBOX-ALIGNED)

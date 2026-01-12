@@ -14,6 +14,7 @@ FEATURE_ORDER = [
     "cfg_edge_count",
     "conditional_count",
     "loop_count",
+    "ternary_count",
 
     # Semantic
     "def_use_edges",

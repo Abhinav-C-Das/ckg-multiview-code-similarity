@@ -118,7 +118,58 @@ cpg.controlStructure
     val canonVars = canonIdMap.getOrElse(method.name, Map())
 
     val loopContext = s"loop_${loop.controlStructureType}"
+        // === NEW PATTERN: SEARCH_WITH_RETURN ===
+    // Detect early exit from search loops
+    val returnNodes = loop.ast.isReturn.l
+    for (ret <- returnNodes) {
+      val returnValue = ret.argumentOut.headOption.map(_.code).getOrElse("UNKNOWN")
+      
+      // Check if return is conditional (inside IF)
+      val isConditional = ret.inAst.isControlStructure
+        .exists(cs => cs.controlStructureType == "IF")
+      
+      if (isConditional) {
+        cesRecords += CESRecord(
+          loopContext, 
+          "RETURN", 
+          "SEARCH_WITH_RETURN", 
+          "EARLY_EXIT"
+        )
+      }
+    }
 
+    // === NEW PATTERN: COMPARISON_CHAIN ===
+    // Detect symmetric comparison patterns (palindrome, reversal validation)
+    val comparisons = loop.ast.isCall
+      .filter(c =>
+        c.name.contains("operator.equals") ||
+        c.name.contains("operator.notEquals")
+      )
+      .l
+
+    for (comp <- comparisons) {
+      val args = comp.argument.code.l
+      
+      // Look for symmetric array/string access patterns
+      // Must have BOTH forward and backward indexing
+      val hasSymmetricAccess = 
+        args.exists(a => a.contains("[i]") || a.contains("[left]") || a.contains("[start]")) &&
+        args.exists(a => 
+          a.contains("[n-i-1]") || a.contains("[n-1-i]") || 
+          a.contains("[right]") || a.contains("[end]") ||
+          (a.contains("len") && a.contains("-i")) ||
+          (a.contains("length") && a.contains("-i"))
+        )
+      
+      if (hasSymmetricAccess) {
+        cesRecords += CESRecord(
+          loopContext,
+          "COMPARISON",
+          "COMPARISON_CHAIN",
+          "SYMMETRIC"
+        )
+      }
+    }
     val inductionVars =
       loop.condition.ast.isIdentifier.name.l.toSet
 
@@ -143,18 +194,46 @@ cpg.controlStructure
           assign.name match {
             case "<operator>.assignmentPlus"  => "ADD"
             case "<operator>.assignmentMinus" => "SUB"
-            case _                            => "ASSIGN"
+            case "<operator>.assignmentMultiplication" => "MUL"
+            case "<operator>.assignmentDivision" => "DIV"
+            case _ => "ASSIGN"
           }
 
         val isAccumulative =
           rhs.contains(rawLhs) ||
           assign.name == "<operator>.assignmentPlus" ||
-          assign.name == "<operator>.assignmentMinus"
+          assign.name == "<operator>.assignmentMinus" ||
+          assign.name == "<operator>.assignmentMultiplication" ||
+          assign.name == "<operator>.assignmentDivision"
 
         val controlGuarded = isControlGuarded(assign, loop)
         val guardCond = getGuardCondition(assign, loop)
+       
+        // Detect narrowing window pattern using canonicalized names
+        val isNarrowingWindow =
+          !isAccumulative &&
+          !controlGuarded &&
+          (lhs == "v0" || lhs == "v1") &&  // First two vars in binary search are window bounds
+          (rhs.contains("mid") || rhs.contains("m") || 
+          rhs.contains("+") || rhs.contains("-"))
+                // === NEW PATTERN: CONDITIONAL_SWAP ===
+        // Detect swap operations under conditional guards (sorting)
+        val isConditionalSwap =
+          !isAccumulative &&
+          !isNarrowingWindow &&
+          controlGuarded &&
+          guardCond.exists(c => 
+            c.contains(">") || c.contains("<") || 
+            c.contains(">=") || c.contains("<=")
+          ) &&
+          (rawLhs == "temp" || rawLhs == "t" || rawLhs == "tmp" ||
+           rawLhs == "swap" || rawLhs == "temp_val" || rawLhs == "tempVal")
 
-        if (isAccumulative) {
+        if (isConditionalSwap) {
+          cesRecords += CESRecord(loopContext, lhs, "CONDITIONAL_SWAP", "ASSIGN")
+        } else if (isNarrowingWindow){
+          cesRecords += CESRecord(loopContext, lhs, "NARROWING_WINDOW", "ASSIGN")
+        } else if (isAccumulative) {
           cesRecords += CESRecord(loopContext, lhs, "ACCUMULATIVE", op)
         } else if (controlGuarded && guardCond.exists(c => isMaxUpdate(rawLhs, c))) {
           cesRecords += CESRecord(loopContext, lhs, "MAX_UPDATE", "COMPARE")
@@ -204,7 +283,7 @@ println(
     cesRecords.map { r =>
       jsonObj(Seq(
         "context"   -> jsonStr(r.context),
-        "variable"  -> jsonStr(r.variable),
+        // "variable" removed - not needed for similarity
         "evolution" -> jsonStr(r.evolution),
         "operator"  -> jsonStr(r.operator)
       ))

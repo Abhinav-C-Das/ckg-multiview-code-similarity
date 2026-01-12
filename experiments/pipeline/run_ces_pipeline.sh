@@ -13,6 +13,7 @@ python3 similarity/vectorize_ces.py
 echo "[CES] Normalize"
 mkdir -p vectors/ces_norm
 for f in vectors/ces/*.vec; do
+  [ -f "$f" ] || continue  # Skip if glob doesn't match any files
   python3 similarity/normalize_ces.py "$f" \
     "vectors/ces_norm/$(basename "$f" .vec).norm.vec"
 done

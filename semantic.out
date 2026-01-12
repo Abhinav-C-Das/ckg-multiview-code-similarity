@@ -1,9 +1,0 @@
-[INFO ] initialising from existing storage (/home/abhinav/ckg_f5/workspace/cpg.bin32/cpg.bin.tmp)
-{
-  "def_use_edges": 6,
-  "def_use_density": 1.0,
-  "control_predicates": 4,
-  "control_data_ratio": 0.6666666666666666,
-  "param_return_ratio": 0.0,
-  "param_output_ratio": 0.0
-}

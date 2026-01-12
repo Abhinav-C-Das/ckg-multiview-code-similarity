@@ -1,0 +1,21 @@
+# Core dependencies for Multi-View Code Similarity Framework
+# All dependencies are Python 3.8+ standard library - no external packages required!
+# 
+# This project uses only built-in Python modules:
+# - json (data serialization)
+# - sys, os (system operations)
+# - pathlib (path handling)
+# - math (mathematical operations)
+# - collections (Counter for vocabulary building)
+# - re (regular expressions)
+#
+# External Requirements:
+# - Joern 4.x (for CPG generation)
+#   Installation: https://github.com/joernio/joern
+#   Required commands: joern, joern-parse
+#
+# - Bash shell (for pipeline scripts)
+#   Linux/macOS: Native
+#   Windows: WSL, Git Bash, or Cygwin
+#
+# Python Version: 3.8 or higher

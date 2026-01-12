@@ -10,11 +10,21 @@ VOCAB_PATH = OUT_DIR / "ces_vocab.json"
 vocab = Counter()
 
 for ces_file in Path("outputs").rglob("ces.json"):
+    # Skip empty files (valid - means no CES features)
+    if ces_file.stat().st_size == 0:
+        continue
+    
     with open(ces_file) as f:
-        records = json.load(f)
-
+        try:
+            records = json.load(f)
+        except json.JSONDecodeError:
+            print(f"[WARN] Invalid JSON in {ces_file}, skipping")
+            continue
+        
+        if not records:  # Skip empty lists []
+            continue
     for r in records:
-        key = f"{r['context']}::{r['variable']}::{r['evolution']}::{r['operator']}"
+        key = f"{r['context']}::{r['evolution']}::{r['operator']}"
         vocab[key] += 1
 
 # Stable index

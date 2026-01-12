@@ -1,0 +1,354 @@
+=============================================================================
+DATASET DOCUMENTATION - Multi-View Code Similarity Evaluation
+=============================================================================
+
+OVERVIEW
+--------
+Complete research dataset of 10 introductory C programming problems with
+multiple reference solutions and student submissions designed to evaluate
+CES (Computation Evolution Signatures) and multi-view code similarity.
+
+Total Files: 89 C programs
+- 23 Reference solutions (2-3 per problem)
+- 66 Student solutions (6-12 per problem)
+- 1 Ground truth JSON file
+
+=============================================================================
+PROBLEM CATALOG
+=============================================================================
+
+PROBLEM 1: ARRAY SUM (CES Core Demonstration)
+----------------------------------------------
+Purpose: Distinguish accumulation (sum += arr[i]) vs recomputation (sum = arr[i])
+CES Patterns: ACCUMULATIVE vs RECOMPUTED
+Directory: data/p1/
+
+References (3):
+- ref1.c: Correct accumulation with += operator
+- ref2.c: BUGGY overwrite pattern (demonstrates CES discrimination!)
+- ref3.c: Recursive accumulation (return arr[n-1] + arraySum(...))
+
+Students (12):
+- s1: Accumulation with different var names (matches ref1)
+- s2: Explicit sum = sum + arr[i] form (matches ref1)
+- s3: Overwrite bug sum = arr[i] (matches ref2)
+- s4: Recursive accumulation (matches ref3)
+- s5: While loop accumulation (matches ref1)
+- s6: Overwrite bug variant (matches ref2)
+- s7: Pointer-based accumulation (matches ref1)
+- s8: Do-while loop (matches ref1)
+- s9: Recursive with helper function (matches ref3)
+- s10: Start from arr[0] variant (matches ref1)
+- s11: Explicit addition in while (matches ref1)
+- s12: Backward iteration (matches ref1)
+
+KEY INSIGHT: ref1 vs ref2 have IDENTICAL structure but CES distinguishes
+accumulation from recomputation!
+
+----------------------------------------------
+PROBLEM 2: FIND MAXIMUM (Extrema Tracking)
+----------------------------------------------
+Purpose: CES MAX_UPDATE pattern detection
+CES Patterns: MAX_UPDATE (conditional update)
+Directory: data/p2/
+
+References (2):
+- ref1.c: Conditional if (arr[i] > max) max = arr[i]
+- ref2.c: Ternary operator max = (arr[i] > max) ? arr[i] : max
+
+Students (6):
+- s1-s4, s6: Conditional max tracking (matches ref1)
+- s2, s5: Ternary operator variants (matches ref2)
+
+Variations: for/while loops, different variable names, inline conditionals
+
+----------------------------------------------
+PROBLEM 3: COUNT OCCURRENCES (Counter Accumulation)
+----------------------------------------------
+Purpose: Counter increment patterns
+CES Patterns: ACCUMULATIVE (count++ vs count += 1)
+Directory: data/p3/
+
+References (2):
+- ref1.c: count++ (post-increment operator)
+- ref2.c: count += 1 (compound assignment)
+
+Students (6):
+- s1, s3, s4, s6: Using ++ operator (matches ref1)
+- s2, s5: Using += 1 (matches ref2)
+
+Variations: for/while/do-while loops, ternary operators, explicit addition
+
+----------------------------------------------
+PROBLEM 4: LINEAR SEARCH (Early Exit vs Flag)
+----------------------------------------------
+Purpose: Control flow strategies (early return vs full traversal)
+CES Patterns: Early exit detection
+Directory: data/p4/
+
+References (2):
+- ref1.c: Early return on match (return i immediately)
+- ref2.c: Flag variable with full loop traversal
+
+Students (6):
+- s1, s2, s4, s6: Early return variants (matches ref1)
+- s3, s5: Flag variable approaches (matches ref2)
+
+Variations: for/while loops, pointer arithmetic, break statements
+
+----------------------------------------------
+PROBLEM 5: ARRAY REVERSAL (Two-Pointer Swap)
+----------------------------------------------
+Purpose: Swap patterns and update strategies
+CES Patterns: Variable reassignment patterns
+Directory: data/p5/
+
+References (2):
+- ref1.c: Two-pointer while loop with temp variable
+- ref2.c: For loop with index calculation
+
+Students (6):
+- s1, s2, s4, s5: Two-pointer approaches (matches ref1)
+- s3, s6: For loop with index calc (matches ref2)
+
+Variations: XOR swap, pointer-based, different loop bounds
+
+----------------------------------------------
+PROBLEM 6: FACTORIAL (Iterative - Loop Accumulation)
+----------------------------------------------
+Purpose: Multiplicative accumulation in loops
+CES Patterns: ACCUMULATIVE (result *= i)
+Directory: data/p6/
+
+References (2):
+- ref1.c: Standard for loop with *=
+- ref2.c: While loop variant
+
+Students (6):
+- s1, s3, s4, s6: For loop variants (matches ref1)
+- s2, s5: While/do-while variants (matches ref2)
+
+Variations: Backward iteration, different init values, explicit multiplication
+
+----------------------------------------------
+PROBLEM 7: FACTORIAL (Recursive - CES in Recursion)
+----------------------------------------------
+Purpose: Recursive accumulation detection
+CES Patterns: ACCUMULATIVE (return n * factorial(n-1))
+Directory: data/p7/
+
+References (2):
+- ref1.c: Single base case (n <= 1)
+- ref2.c: Explicit dual base cases (n == 0 and n == 1)
+
+Students (6):
+- s1, s3, s4, s6: Single base case variants (matches ref1)
+- s2, s5: Explicit base cases (matches ref2)
+
+Variations: Ternary operator, temp variables, different comparisons
+
+----------------------------------------------
+PROBLEM 8: FIBONACCI (Multiple Strategies)
+----------------------------------------------
+Purpose: Iterative vs recursive, multiple accumulation patterns
+CES Patterns: Multiple (two-variable swap, recursive accumulation)
+Directory: data/p8/
+
+References (2):
+- ref1.c: Iterative with two-variable swap
+- ref2.c: Naive recursive fibonacci(n-1) + fibonacci(n-2)
+
+Students (7):
+- s1, s3, s4, s5, s7: Iterative variants (matches ref1)
+- s2, s6: Recursive variants (matches ref2)
+
+Variations: Array-based DP, while loops, clever swaps, explicit base cases
+
+----------------------------------------------
+PROBLEM 9: GCD (Euclidean Algorithm - Variable Reassignment)
+----------------------------------------------
+Purpose: Variable role reassignment patterns
+CES Patterns: Variable swap and reassignment
+Directory: data/p9/
+
+References (2):
+- ref1.c: Iterative with temp variable swap
+- ref2.c: Recursive gcd(b, a % b)
+
+Students (6):
+- s1, s3, s4, s6: Iterative variants (matches ref1)
+- s2, s5: Recursive variants (matches ref2)
+
+Variations: Subtraction-based, ternary, inline swap, different temp strategies
+
+----------------------------------------------
+PROBLEM 10: PRIME CHECK (Nested Conditionals)
+----------------------------------------------
+Purpose: Loop optimization and early exit
+CES Patterns: Complex control flow
+Directory: data/p10/
+
+References (2):
+- ref1.c: Optimized (i * i <= n)
+- ref2.c: Full loop (i < n)
+
+Students (6):
+- s1, s3, s4, s6: Sqrt optimization variants (matches ref1)
+- s2, s5: Full loop variants (matches ref2)
+
+Variations: Odd-only checking, flag variables, while loops
+
+=============================================================================
+REFERENCE vs STUDENT DIFFERENCES
+=============================================================================
+
+REFERENCE SOLUTIONS:
+-------------------
+- Represent DISTINCT algorithmic strategies
+- Each ref demonstrates a different CES pattern or control flow
+- Purposefully include buggy patterns (e.g., P1-ref2 overwrite)
+- Minimal code, clear canonical forms
+- Focus on ONE specific pattern per reference
+
+STUDENT SOLUTIONS:
+-----------------
+- Implement SAME strategy as a reference but with variations:
+  * Different variable names (sum vs total vs result)
+  * Different loop types (for vs while vs do-while)
+  * Different operators (++ vs += 1, *= vs = x * y)
+  * Different initialization strategies
+  * Different syntactic forms (ternary vs if-else)
+  * Pointer arithmetic vs array indexing
+  
+- Student solutions MAINTAIN semantic equivalence to their matched reference
+- Variations test whether similarity method detects semantic matches
+  despite syntactic differences
+
+EXAMPLE (Problem 1):
+- ref1: Uses sum += arr[i] (accumulation)
+- s1: Uses total += a[j] (same pattern, different names)
+- s2: Uses sum = sum + arr[i] (same pattern, explicit form)
+- ref2: Uses sum = arr[i] (recomputation - DIFFERENT pattern)
+- s3: Uses sum = arr[i] (matches ref2, NOT ref1)
+
+CES should score: s1↔ref1 HIGH, s1↔ref2 LOW (despite structural similarity)
+
+=============================================================================
+GROUND TRUTH ANNOTATIONS
+=============================================================================
+
+Format: [student_id, reference_id]
+
+Each student solution is mapped to the reference it semantically matches.
+This ground truth enables:
+- Top-k accuracy evaluation (is correct ref in top k?)
+- Ablation studies (does CES improve matching?)
+- Baseline comparisons (token-based vs structure-based vs our method)
+
+See: data/ground_truth.json for complete mappings
+
+=============================================================================
+CES PATTERNS DEMONSTRATED
+=============================================================================
+
+1. ACCUMULATIVE (Loop-based):
+   - P1: sum += arr[i] (additive)
+   - P6: result *= i (multiplicative)
+   - P3: count++ (increment)
+
+2. RECOMPUTED (Bug pattern):
+   - P1-ref2: sum = arr[i] (overwrites each iteration)
+
+3. MAX_UPDATE / MIN_UPDATE:
+   - P2: if (arr[i] > max) max = arr[i]
+
+4. ACCUMULATIVE (Recursive):
+   - P7: return n * factorial(n-1)
+   - P8: return fib(n-1) + fib(n-2)
+
+5. Variable Reassignment:
+   - P9: temp = b; b = a % b; a = temp (swap pattern)
+
+6. Complex Control Flow:
+   - P4: Early return vs flag variable
+   - P10: Loop optimization patterns
+
+=============================================================================
+USAGE FOR EVALUATION
+=============================================================================
+
+1. Run Pipeline:
+   ./run_full_pipeline.sh
+   
+2. Generates similarity matrices for each view:
+   - Baseline numeric features
+   - WL kernel
+   - SCDPS paths
+   - CES patterns
+
+3. Evaluate against ground truth:
+   python3 evaluation/run_topk_retrieval_evaluation.py
+   
+4. Compute metrics:
+   - Top-1, Top-3, Top-5 accuracy
+   - Mean Average Precision
+   - Mean Reciprocal Rank
+
+5. Ablation studies:
+   - Remove CES: Does accuracy drop for P1 (accumulation vs overwrite)?
+   - Remove SCDPS: Impact on semantic similarity?
+   - Remove WL: Effect on structural variants?
+
+Expected Results:
+- CES should significantly improve P1 accuracy (accumulation discrimination)
+- CES should help P6-P7 (multiplicative vs additive patterns)
+- WL should handle syntactic variations (var names, loop types)
+- SCDPS should capture control/data flow differences
+
+=============================================================================
+DATASET CHARACTERISTICS
+=============================================================================
+
+Language: C
+Scope: Introductory programming (CS1 level)
+Complexity: 10-50 LOC per program
+Focus: CES discrimination + multi-view analysis
+Problems: 10 classic algorithms
+Total programs: 89
+Reference solutions: 23
+Student solutions: 66
+
+Distribution:
+- P1: 3 refs, 12 students (CES showcase)
+- P2-P7: 2 refs, 6 students each
+- P8: 2 refs, 7 students
+- P9-P10: 2 refs, 6 students each
+
+Expandability: Easy to add more student variants per problem
+
+=============================================================================
+FOR PAPER SECTION IV (EVALUATION)
+=============================================================================
+
+When writing your evaluation section, describe as:
+
+"We created a benchmark suite of 10 introductory programming problems
+commonly used in CS1 courses. For each problem, we authored 2-3 reference
+solutions representing distinct algorithmic strategies (iterative vs
+recursive, different update patterns, optimized vs naive implementations).
+We then created 6-12 student solutions per problem exhibiting systematic
+variations in syntax, control structures, and coding style while
+maintaining semantic equivalence to one reference solution.
+
+The dataset focuses on patterns where CES provides discriminative power:
+accumulation vs recomputation (Problem 1), multiplicative vs additive
+patterns (Problems 6-7), and variable role evolution (Problem 9). Ground
+truth annotations were established by the authors based on algorithmic
+strategy, mapping each of 66 student solutions to its semantically
+equivalent reference.
+
+This controlled design enables precise evaluation of each similarity view's
+contribution through ablation studies and isolates CES's value for semantic
+discrimination."
+
+=============================================================================

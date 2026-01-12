@@ -18,14 +18,14 @@ MODE="$3"   # students | refs
 # ---------------------------------------
 # Normalize role + paths (CRITICAL FIX)
 # ---------------------------------------
-if [ "$MODE" = "students" ]; then
+if [ "$MODE" = "s" ]; then
   ROLE="s"
   SRC="data/${PROBLEM}/s/${ID}.c"
-  OUT="outputs/${PROBLEM}_students/${ID}"
-elif [ "$MODE" = "refs" ]; then
+  OUT="outputs/${PROBLEM}/s/${ID}"
+elif [ "$MODE" = "ref" ]; then
   ROLE="ref"
   SRC="data/${PROBLEM}/ref/${ID}.c"
-  OUT="outputs/${PROBLEM}_refs/${ID}"
+  OUT="outputs/${PROBLEM}/ref/${ID}"
 else
   echo "Unknown MODE: $MODE"
   exit 1
@@ -56,15 +56,16 @@ fi
 # ---------------------------------------
 export TARGET_FILE="$(basename "$SRC")"
 
-joern --exit --cpg "$CPG_PATH" \
-      --script cpg/scripts/semantic/ces_semantic.sc \
-      > "$OUT/ces_raw.json"
-
+(cd "$CPG_DIR" && \
+  joern --script ../../../../cpg/scripts/semantic/ces_semantic.sc) \
+  > "$OUT/ces_raw.json"
 # ---------------------------------------
 # Sanitize JSON output
 # ---------------------------------------
-awk '/^[[:space:]]*\[\{/{flag=1} flag' \
-  "$OUT/ces_raw.json" > "$OUT/ces.json"
+tail -1 "$OUT/ces_raw.json" > "$OUT/ces.json"
+if [ ! -s "$OUT/ces.json" ]; then
+  echo "[]" > "$OUT/ces.json"
+fi
 
 rm "$OUT/ces_raw.json"
 
