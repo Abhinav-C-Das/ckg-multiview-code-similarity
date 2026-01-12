@@ -151,7 +151,7 @@ ckg-multiview-code-similarity/
 │   └── run_retrieval_evaluation.py # Accuracy evaluation
 │
 ├── explanations/                  # Comprehensive documentation
-│   ├── PROJECT_OVERVIEW_FOR_GUIDE.md
+│   ├── PROJECT_OVERVIEW.md
 │   ├── baseline_explanation.md
 │   ├── wl_explanation.md
 │   ├── scdps_explanation.md
@@ -339,7 +339,7 @@ These are **intentional**, not limitations:
 
 Detailed explanations available in `explanations/`:
 
-- **[PROJECT_OVERVIEW_FOR_GUIDE.md](explanations/PROJECT_OVERVIEW_FOR_GUIDE.md)** - Full system walkthrough (435 lines)
+- **[PROJECT_OVERVIEW.md](explanations/PROJECT_OVERVIEW.md)** - Full system walkthrough (435 lines)
 - **[baseline_explanation.md](explanations/baseline_explanation.md)** - Baseline view details
 - **[wl_explanation.md](explanations/wl_explanation.md)** - Weisfeiler-Lehman algorithm
 - **[scdps_explanation.md](explanations/scdps_explanation.md)** - PDG path extraction
